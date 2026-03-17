@@ -1,4 +1,6 @@
-# 📄 RH Inteligente — Ranqueamento de Currículos com IA
+# ConectaTalentos
+
+## 📄 RH Inteligente — Ranqueamento de Currículos com IA
 
 > Projeto do **Grupo 4** do curso **IA para Desenvolvedores**
 
