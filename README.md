@@ -39,6 +39,37 @@ Ranquear candidatos e facilitar a decisão do RH na escolha do profissional mais
 
 ---
 
+## 📄 Conversão de PDF para Texto
+
+Script utilitário para extrair texto de arquivos PDF, utilizado na etapa de extração de currículos.
+
+### Instalação
+
+```bash
+source .venv/bin/activate
+pip install pymupdf
+```
+
+### Uso
+
+```bash
+# Exibir o texto no terminal
+python pdf_to_text.py arquivo.pdf
+
+# Salvar o texto em um arquivo
+python pdf_to_text.py arquivo.pdf saida.txt
+```
+
+### Arquivo de exemplo
+
+O arquivo `exemplo.pdf` contém um texto lorem ipsum para testes rápidos:
+
+```bash
+python pdf_to_text.py exemplo.pdf
+```
+
+---
+
 ## 👥 Integrantes — Grupo 4
 
 | Nome |
