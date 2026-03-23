@@ -70,7 +70,7 @@ python -m venv .venv
 ### 3. Instalar Dependências
 
 ```bash
-pip install -r requirements-basico.txt
+pip install -r backend/requirements-basico.txt
 ```
 
 Ou instalar manualmente:
@@ -82,28 +82,28 @@ pip install pymupdf
 
 **Executar exemplos completos:**
 ```bash
-python exemplo_uso_extrator.py
+python backend/src/exemplo_uso_extrator.py
 ```
 
 **Testar com arquivo de exemplo:**
 ```bash
 # Exibir no terminal
-python extrator_pdf.py exemplo.pdf
+python backend/src/extrator_pdf.py backend/exemplo.pdf
 
 # Salvar em arquivo
-python extrator_pdf.py exemplo.pdf saida.txt
+python backend/src/extrator_pdf.py backend/exemplo.pdf saida.txt
 ```
 
 **Usar a classe no código:**
 ```python
 from pathlib import Path
-from extrator_pdf import ExtratorPDF
+from backend.src.extrator_pdf import ExtratorPDF
 
 # Criar extrator
 extrator = ExtratorPDF(max_paginas=10)
 
 # Extrair texto
-resultado = extrator.extrair_texto(Path("exemplo.pdf"))
+resultado = extrator.extrair_texto(Path("backend/exemplo.pdf"))
 
 # Usar resultado
 print(f"Páginas: {resultado.num_paginas}")
@@ -114,30 +114,33 @@ print(f"Texto: {resultado.conteudo}")
 
 ```
 Conecta-Talentos/
-├── extrator_pdf.py              # Classe ExtratorPDF
-├── exemplo_uso_extrator.py      # Exemplos de uso
-├── pdf_to_text.py               # Script legado (compatibilidade)
-├── exemplo.pdf                  # Arquivo de teste
-├── requirements-basico.txt      # Dependências Python
-├── .gitignore                   # Arquivos ignorados pelo Git
-├── docs/                        # Documentação
-│   ├── base-implementacao.md    # Guia completo de implementação
-│   ├── classe-extrator-pdf.md   # Documentação técnica da classe
-│   └── como-usar-extrator.md    # Guia de uso prático
-└── .kiro/specs/                 # Especificações do projeto
-    └── conecta-talentos/
-        ├── requirements.md      # Requisitos do sistema
-        ├── design.md            # Design técnico
-        └── .config.kiro         # Configuração do workflow
+├── .kiro/                           # Especificações do Kiro/IA
+├── .github/                         # Configurações para Github
+├── backend/                         # Backend Python
+│   ├── docs/                        # Documentação
+│   │   ├── base-implementacao.md
+│   │   ├── classe-extrator-pdf.md
+│   │   └── como-usar-extrator.md
+│   ├── tests/                       # Testes automatizados
+│   ├── src/                         # Código-fonte
+│   │   ├── extrator_pdf.py
+│   │   ├── exemplo_uso_extrator.py
+│   │   └── pdf_to_text.py
+│   ├── .env.example                 # Variáveis de ambiente
+│   ├── exemplo.pdf                  # Arquivo de teste
+│   └── requirements-basico.txt      # Dependências Python
+├── scripts/                         # Scripts gerais do repositório
+├── .gitignore
+└── README.md
 ```
 
 ---
 
 ## 📚 Documentação
 
-- **[Guia de Uso](docs/como-usar-extrator.md)** - Como usar a classe ExtratorPDF
-- **[Documentação Técnica](docs/classe-extrator-pdf.md)** - Arquitetura e detalhes da implementação
-- **[Base de Implementação](docs/base-implementacao.md)** - Guia completo para implementar o sistema
+- **[Guia de Uso](backend/docs/como-usar-extrator.md)** - Como usar a classe ExtratorPDF
+- **[Documentação Técnica](backend/docs/classe-extrator-pdf.md)** - Arquitetura e detalhes da implementação
+- **[Base de Implementação](backend/docs/base-implementacao.md)** - Guia completo para implementar o sistema
 - **[Requisitos](/.kiro/specs/conecta-talentos/requirements.md)** - Requisitos funcionais do sistema
 - **[Design](/.kiro/specs/conecta-talentos/design.md)** - Arquitetura e design técnico
 
@@ -151,10 +154,10 @@ Script utilitário original para extrair texto de arquivos PDF.
 
 ```bash
 # Exibir o texto no terminal
-python pdf_to_text.py arquivo.pdf
+python backend/src/pdf_to_text.py backend/exemplo.pdf
 
 # Salvar o texto em um arquivo
-python pdf_to_text.py arquivo.pdf saida.txt
+python backend/src/pdf_to_text.py backend/exemplo.pdf saida.txt
 ```
 
 ### Nova Classe ExtratorPDF (Recomendado)
@@ -163,10 +166,10 @@ Classe profissional com validação, tratamento de erros e documentação comple
 
 ```bash
 # Executar exemplos
-python exemplo_uso_extrator.py
+python backend/src/exemplo_uso_extrator.py
 
 # Usar diretamente
-python extrator_pdf.py exemplo.pdf
+python backend/src/extrator_pdf.py backend/exemplo.pdf
 ```
 
 ---
@@ -177,10 +180,10 @@ Para testar a classe ExtratorPDF:
 
 ```bash
 # Executar todos os exemplos
-python exemplo_uso_extrator.py
+python backend/src/exemplo_uso_extrator.py
 
 # Testar com arquivo específico
-python extrator_pdf.py seu_arquivo.pdf
+python backend/src/extrator_pdf.py seu_arquivo.pdf
 ```
 
 ---
