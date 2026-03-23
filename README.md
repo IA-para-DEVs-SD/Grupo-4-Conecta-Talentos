@@ -10,7 +10,7 @@
 
 Ranquear candidatos e facilitar a decisão do RH na escolha do profissional mais adequado para cada vaga.
 
----
+--- 
 
 ## ⚙️ Como Funciona
 
@@ -39,34 +39,187 @@ Ranquear candidatos e facilitar a decisão do RH na escolha do profissional mais
 
 ---
 
-## 📄 Conversão de PDF para Texto
+## 🚀 Como Executar o Projeto
 
-Script utilitário para extrair texto de arquivos PDF, utilizado na etapa de extração de currículos.
+### Pré-requisitos
 
-### Instalação
+- Python 3.11 ou superior
+- pip (gerenciador de pacotes Python)
+
+### 1. Clonar o Repositório
 
 ```bash
+git clone <url-do-repositorio>
+cd Conecta-Talentos
+```
+
+### 2. Criar Ambiente Virtual
+
+**Linux/Mac:**
+```bash
+python -m venv .venv
 source .venv/bin/activate
+```
+
+**Windows:**
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+### 3. Instalar Dependências
+
+```bash
+pip install -r backend/requirements-basico.txt
+```
+
+Ou instalar manualmente:
+```bash
 pip install pymupdf
 ```
 
-### Uso
+### 4. Testar a Classe ExtratorPDF
+
+**Executar exemplos completos:**
+```bash
+python backend/src/exemplo_uso_extrator.py
+```
+
+**Testar com arquivo de exemplo:**
+```bash
+# Exibir no terminal
+python backend/src/extrator_pdf.py backend/exemplo.pdf
+
+# Salvar em arquivo
+python backend/src/extrator_pdf.py backend/exemplo.pdf saida.txt
+```
+
+**Usar a classe no código:**
+```python
+from pathlib import Path
+from backend.src.extrator_pdf import ExtratorPDF
+
+# Criar extrator
+extrator = ExtratorPDF(max_paginas=10)
+
+# Extrair texto
+resultado = extrator.extrair_texto(Path("backend/exemplo.pdf"))
+
+# Usar resultado
+print(f"Páginas: {resultado.num_paginas}")
+print(f"Texto: {resultado.conteudo}")
+```
+
+### 5. Estrutura do Projeto
+
+```
+Conecta-Talentos/
+├── .kiro/                           # Especificações do Kiro/IA
+├── .github/                         # Configurações para Github
+├── backend/                         # Backend Python
+│   ├── docs/                        # Documentação
+│   │   ├── base-implementacao.md
+│   │   ├── classe-extrator-pdf.md
+│   │   └── como-usar-extrator.md
+│   ├── tests/                       # Testes automatizados
+│   ├── src/                         # Código-fonte
+│   │   ├── extrator_pdf.py
+│   │   ├── exemplo_uso_extrator.py
+│   │   └── pdf_to_text.py
+│   ├── .env.example                 # Variáveis de ambiente
+│   ├── exemplo.pdf                  # Arquivo de teste
+│   └── requirements-basico.txt      # Dependências Python
+├── scripts/                         # Scripts gerais do repositório
+├── .gitignore
+└── README.md
+```
+
+---
+
+## 📚 Documentação
+
+- **[Guia de Uso](backend/docs/como-usar-extrator.md)** - Como usar a classe ExtratorPDF
+- **[Documentação Técnica](backend/docs/classe-extrator-pdf.md)** - Arquitetura e detalhes da implementação
+- **[Base de Implementação](backend/docs/base-implementacao.md)** - Guia completo para implementar o sistema
+- **[Requisitos](/.kiro/specs/conecta-talentos/requirements.md)** - Requisitos funcionais do sistema
+- **[Design](/.kiro/specs/conecta-talentos/design.md)** - Arquitetura e design técnico
+
+---
+
+## 📄 Conversão de PDF para Texto
+
+### Script Legado (pdf_to_text.py)
+
+Script utilitário original para extrair texto de arquivos PDF.
 
 ```bash
 # Exibir o texto no terminal
-python pdf_to_text.py arquivo.pdf
+python backend/src/pdf_to_text.py backend/exemplo.pdf
 
 # Salvar o texto em um arquivo
-python pdf_to_text.py arquivo.pdf saida.txt
+python backend/src/pdf_to_text.py backend/exemplo.pdf saida.txt
 ```
 
-### Arquivo de exemplo
+### Nova Classe ExtratorPDF (Recomendado)
 
-O arquivo `exemplo.pdf` contém um texto lorem ipsum para testes rápidos:
+Classe profissional com validação, tratamento de erros e documentação completa.
 
 ```bash
-python pdf_to_text.py exemplo.pdf
+# Executar exemplos
+python backend/src/exemplo_uso_extrator.py
+
+# Usar diretamente
+python backend/src/extrator_pdf.py backend/exemplo.pdf
 ```
+
+---
+
+## 🧪 Testes
+
+Para testar a classe ExtratorPDF:
+
+```bash
+# Executar todos os exemplos
+python backend/src/exemplo_uso_extrator.py
+
+# Testar com arquivo específico
+python backend/src/extrator_pdf.py seu_arquivo.pdf
+```
+
+---
+
+## 🔧 Solução de Problemas
+
+### Erro: "ModuleNotFoundError: No module named 'pymupdf'"
+
+**Solução:**
+```bash
+pip install pymupdf
+```
+
+### Erro: "Arquivo não encontrado"
+
+**Solução:** Verifique se o arquivo PDF existe no diretório atual ou forneça o caminho completo.
+
+### Erro: "PDF tem X páginas, máximo permitido: Y"
+
+**Solução:** Aumente o limite de páginas ao criar o extrator:
+```python
+extrator = ExtratorPDF(max_paginas=20)
+```
+
+---
+
+## 📈 Roadmap
+
+- [x] Classe ExtratorPDF implementada
+- [x] Documentação completa
+- [x] Especificações (requirements e design)
+- [ ] Classe Anonimizador (Microsoft Presidio)
+- [ ] Classe AnalisadorLLM (OpenAI)
+- [ ] Interface Web (FastAPI)
+- [ ] Testes automatizados
+- [ ] Deploy em produção
 
 ---
 

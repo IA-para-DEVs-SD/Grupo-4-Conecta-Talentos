@@ -1,0 +1,5 @@
+# Dependências básicas para a classe ExtratorPDF
+# ConectaTalentos - IA para Devs
+
+# Processamento de PDF
+pymupdf==1.23.21
