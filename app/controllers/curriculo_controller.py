@@ -19,8 +19,6 @@ router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
 
 
-# ── API JSON ──────────────────────────────────────────────
-
 @router.post("/api/{vaga_id}", status_code=201)
 async def api_upload_curriculos(
     vaga_id: int,
@@ -87,8 +85,6 @@ def api_deletar_curriculo(curriculo_id: int, db: Session = Depends(get_db)):
     except CurriculoNaoEncontradoError:
         raise HTTPException(status_code=404, detail=f"Currículo #{curriculo_id} não encontrado.")
 
-
-# ── HTML Pages ────────────────────────────────────────────
 
 @router.get("/upload/{vaga_id}", response_class=HTMLResponse)
 def form_upload(request: Request, vaga_id: int, db: Session = Depends(get_db)):
@@ -160,7 +156,6 @@ def excluir_curriculo(
     db: Session = Depends(get_db),
 ):
     service = CurriculoService(db)
-    # Pegar vaga_id antes de deletar
     try:
         curriculo = service.obter(curriculo_id)
         vaga_id = curriculo.vaga_id

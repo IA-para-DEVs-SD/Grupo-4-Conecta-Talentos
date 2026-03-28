@@ -1,4 +1,3 @@
-"""Testes unitários para VagaService."""
 
 import pytest
 from app.schemas.vaga_schema import VagaCreateSchema

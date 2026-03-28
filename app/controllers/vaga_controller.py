@@ -16,8 +16,6 @@ router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
 
 
-# ── API JSON ──────────────────────────────────────────────
-
 @router.post("/api", response_model=VagaResponseSchema, status_code=201)
 def api_criar_vaga(dados: VagaCreateSchema, db: Session = Depends(get_db)):
     service = VagaService(db)
@@ -73,8 +71,6 @@ def api_deletar_vaga(vaga_id: int, db: Session = Depends(get_db)):
         from fastapi import HTTPException
         raise HTTPException(status_code=404, detail=f"Vaga #{vaga_id} não encontrada.")
 
-
-# ── HTML Pages ────────────────────────────────────────────
 
 @router.get("/", response_class=HTMLResponse)
 def listar_vagas(
@@ -224,8 +220,6 @@ def excluir_vaga(vaga_id: int, db: Session = Depends(get_db)):
     )
 
 
-# ── Helpers ───────────────────────────────────────────────
-
 _MENSAGENS_PT = {
     "string_too_short": "deve ter pelo menos {min_length} caracteres",
     "string_too_long": "deve ter no máximo {max_length} caracteres",
@@ -238,7 +232,6 @@ _MENSAGENS_PT = {
 
 
 def _formatar_erros_pt(e: ValidationError) -> str:
-    """Converte erros do Pydantic para mensagens amigáveis em português."""
     mensagens = []
     for err in e.errors():
         campo = err["loc"][-1] if err["loc"] else "campo"
@@ -246,7 +239,6 @@ def _formatar_erros_pt(e: ValidationError) -> str:
         tipo = err["type"]
 
         if tipo == "value_error":
-            # Mensagem customizada dos validators — já está em PT
             msg = err["msg"].replace("Value error, ", "")
             mensagens.append(msg)
         elif tipo in _MENSAGENS_PT:

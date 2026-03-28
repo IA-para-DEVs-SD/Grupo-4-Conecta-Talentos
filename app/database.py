@@ -14,12 +14,10 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 def init_db() -> None:
-    """Cria todas as tabelas no banco de dados."""
     Base.metadata.create_all(bind=engine)
 
 
 def get_db() -> Session:
-    """Dependency para injetar sessão do banco nas rotas."""
     db = SessionLocal()
     try:
         yield db

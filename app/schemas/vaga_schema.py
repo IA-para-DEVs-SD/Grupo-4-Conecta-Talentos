@@ -1,4 +1,3 @@
-"""Schemas Pydantic para validação de Vagas."""
 
 from typing import List, Optional
 from datetime import datetime
@@ -15,7 +14,6 @@ _CAMPO_LABELS = {
 
 
 class VagaCreateSchema(BaseModel):
-    """Schema para criação/edição de vaga."""
 
     titulo: str = Field(..., min_length=3, max_length=200)
     descricao: str = Field(..., min_length=10)
@@ -62,7 +60,6 @@ class VagaCreateSchema(BaseModel):
 
 
 class VagaResponseSchema(BaseModel):
-    """Schema de resposta de vaga."""
 
     id: int
     titulo: str
@@ -75,7 +72,6 @@ class VagaResponseSchema(BaseModel):
 
 
 class VagaListResponseSchema(BaseModel):
-    """Schema de resposta paginada."""
 
     vagas: List[VagaResponseSchema]
     total: int

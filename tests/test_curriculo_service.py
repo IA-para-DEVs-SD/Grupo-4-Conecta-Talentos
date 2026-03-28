@@ -1,4 +1,3 @@
-"""Testes unitários para CurriculoService."""
 
 import pytest
 from app.services.curriculo_service import (
@@ -11,7 +10,6 @@ from app.services.curriculo_service import (
 from app.schemas.vaga_schema import VagaCreateSchema
 from app.services.vaga_service import VagaService
 
-# PDF mínimo válido (magic number + conteúdo)
 PDF_VALIDO = b"%PDF-1.4 fake content for testing purposes"
 PDF_INVALIDO = b"Este nao e um PDF"
 
@@ -46,7 +44,6 @@ class TestValidarPdf:
 
 
 def _criar_vaga(db_session) -> int:
-    """Helper para criar uma vaga de teste e retornar o ID."""
     service = VagaService(db_session)
     vaga = service.criar(VagaCreateSchema(
         titulo="Dev Python",

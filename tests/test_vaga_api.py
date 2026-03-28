@@ -1,4 +1,3 @@
-"""Testes de integração para API de Vagas."""
 
 import pytest
 

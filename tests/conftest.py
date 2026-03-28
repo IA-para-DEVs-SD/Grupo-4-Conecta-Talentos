@@ -1,4 +1,3 @@
-"""Fixtures compartilhadas para testes."""
 
 import pytest
 from sqlalchemy import create_engine, StaticPool
@@ -13,7 +12,6 @@ from app.controllers import vaga_controller, curriculo_controller, ranking_contr
 
 
 def _create_test_app(get_db_override):
-    """Cria app FastAPI sem lifespan para testes."""
     test_app = FastAPI()
     test_app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
@@ -34,7 +32,6 @@ def _create_test_app(get_db_override):
 
 @pytest.fixture()
 def db_session():
-    """Banco SQLite em memória para testes unitários."""
     engine = create_engine(
         "sqlite:///:memory:",
         connect_args={"check_same_thread": False},
@@ -52,7 +49,6 @@ def db_session():
 
 @pytest.fixture()
 def client():
-    """TestClient com banco de teste em memória para integração."""
     engine = create_engine(
         "sqlite:///:memory:",
         connect_args={"check_same_thread": False},

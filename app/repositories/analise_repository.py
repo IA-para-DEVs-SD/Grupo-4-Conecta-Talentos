@@ -41,7 +41,6 @@ class AnaliseRepository:
         return _orm_to_domain(orm) if orm else None
 
     def listar_por_vaga(self, vaga_id: int) -> List[Analise]:
-        """Retorna análises de todos os currículos de uma vaga, ordenadas por score desc."""
         from app.models.orm import CurriculoORM
         orms = (
             self.db.query(AnaliseORM)

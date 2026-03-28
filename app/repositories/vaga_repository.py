@@ -57,11 +57,9 @@ class VagaRepository:
         return _orm_to_domain(orm)
 
     def deletar(self, vaga_id: int) -> bool:
-        """Deleta vaga, currículos, análises e PDFs do disco em cascata."""
         orm = self.db.query(VagaORM).filter(VagaORM.id == vaga_id).first()
         if not orm:
             return False
-        # Remove PDFs do disco antes de deletar do banco
         curriculos = self.db.query(CurriculoORM).filter(CurriculoORM.vaga_id == vaga_id).all()
         for curriculo in curriculos:
             if curriculo.caminho_pdf and os.path.exists(curriculo.caminho_pdf):

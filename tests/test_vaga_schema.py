@@ -1,4 +1,3 @@
-"""Testes unitários para validação de schemas de Vaga."""
 
 import pytest
 from pydantic import ValidationError
@@ -6,7 +5,6 @@ from app.schemas.vaga_schema import VagaCreateSchema
 
 
 class TestVagaCreateSchema:
-    """Testes de validação do schema de criação de vaga."""
 
     def test_schema_valido(self):
         schema = VagaCreateSchema(
