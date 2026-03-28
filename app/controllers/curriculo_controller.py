@@ -1,5 +1,3 @@
-"""Controller de Currículos — rotas HTML e API."""
-
 from urllib.parse import quote
 from typing import List
 
@@ -29,7 +27,7 @@ async def api_upload_curriculos(
     arquivos: List[UploadFile] = File(...),
     db: Session = Depends(get_db),
 ):
-    """POST /curriculos/api/{vaga_id} — Upload de múltiplos currículos via JSON."""
+
     from fastapi import HTTPException
 
     service = CurriculoService(db)
@@ -63,7 +61,6 @@ async def api_upload_curriculos(
 
 @router.get("/api/{vaga_id}")
 def api_listar_curriculos(vaga_id: int, db: Session = Depends(get_db)):
-    """GET /curriculos/api/{vaga_id} — Lista currículos de uma vaga."""
     service = CurriculoService(db)
     curriculos = service.listar_por_vaga(vaga_id)
     return {
@@ -83,7 +80,6 @@ def api_listar_curriculos(vaga_id: int, db: Session = Depends(get_db)):
 
 @router.delete("/api/{curriculo_id}", status_code=204)
 def api_deletar_curriculo(curriculo_id: int, db: Session = Depends(get_db)):
-    """DELETE /curriculos/api/{id} — Deleta currículo."""
     from fastapi import HTTPException
     service = CurriculoService(db)
     try:
@@ -96,7 +92,6 @@ def api_deletar_curriculo(curriculo_id: int, db: Session = Depends(get_db)):
 
 @router.get("/upload/{vaga_id}", response_class=HTMLResponse)
 def form_upload(request: Request, vaga_id: int, db: Session = Depends(get_db)):
-    """GET /curriculos/upload/{vaga_id} — Formulário de upload."""
     vaga_service = VagaService(db)
     try:
         vaga = vaga_service.obter(vaga_id)
@@ -122,7 +117,6 @@ async def upload_curriculos(
     arquivos: List[UploadFile] = File(...),
     db: Session = Depends(get_db),
 ):
-    """POST /curriculos/upload/{vaga_id} — Processa upload de múltiplos currículos."""
     service = CurriculoService(db)
 
     itens = []
@@ -165,7 +159,6 @@ def excluir_curriculo(
     curriculo_id: int,
     db: Session = Depends(get_db),
 ):
-    """POST /curriculos/{id}/excluir — Exclui currículo via formulário."""
     service = CurriculoService(db)
     # Pegar vaga_id antes de deletar
     try:

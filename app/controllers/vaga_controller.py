@@ -1,5 +1,3 @@
-"""Controller de Vagas — rotas HTML e API."""
-
 from urllib.parse import quote
 
 from fastapi import APIRouter, Request, Depends, Form, Query
@@ -22,7 +20,6 @@ templates = Jinja2Templates(directory="app/templates")
 
 @router.post("/api", response_model=VagaResponseSchema, status_code=201)
 def api_criar_vaga(dados: VagaCreateSchema, db: Session = Depends(get_db)):
-    """POST /vagas/api — Cria vaga via JSON."""
     service = VagaService(db)
     vaga = service.criar(dados)
     return _vaga_to_response(vaga)
@@ -30,7 +27,6 @@ def api_criar_vaga(dados: VagaCreateSchema, db: Session = Depends(get_db)):
 
 @router.put("/api/{vaga_id}", response_model=VagaResponseSchema)
 def api_atualizar_vaga(vaga_id: int, dados: VagaCreateSchema, db: Session = Depends(get_db)):
-    """PUT /vagas/api/{id} — Atualiza vaga via JSON."""
     service = VagaService(db)
     try:
         vaga = service.atualizar(vaga_id, dados)
@@ -46,7 +42,6 @@ def api_listar_vagas(
     por_pagina: int = Query(10, ge=1, le=100),
     db: Session = Depends(get_db),
 ):
-    """GET /vagas/api — Lista vagas paginadas via JSON."""
     service = VagaService(db)
     vagas, total, total_paginas = service.listar_paginado(pagina, por_pagina)
     return VagaListResponseSchema(
@@ -60,7 +55,6 @@ def api_listar_vagas(
 
 @router.get("/api/{vaga_id}", response_model=VagaResponseSchema)
 def api_obter_vaga(vaga_id: int, db: Session = Depends(get_db)):
-    """GET /vagas/api/{id} — Obtém vaga por ID via JSON."""
     service = VagaService(db)
     try:
         vaga = service.obter(vaga_id)
@@ -72,7 +66,6 @@ def api_obter_vaga(vaga_id: int, db: Session = Depends(get_db)):
 
 @router.delete("/api/{vaga_id}", status_code=204)
 def api_deletar_vaga(vaga_id: int, db: Session = Depends(get_db)):
-    """DELETE /vagas/api/{id} — Deleta vaga."""
     service = VagaService(db)
     try:
         service.deletar(vaga_id)
@@ -89,7 +82,6 @@ def listar_vagas(
     pagina: int = Query(1, ge=1),
     db: Session = Depends(get_db),
 ):
-    """GET /vagas — Lista vagas com paginação."""
     service = VagaService(db)
     vagas, total, total_paginas = service.listar_paginado(pagina, por_pagina=10)
     return templates.TemplateResponse(request, "vagas/lista.html", {
@@ -102,7 +94,6 @@ def listar_vagas(
 
 @router.get("/criar", response_class=HTMLResponse)
 def form_criar_vaga(request: Request):
-    """GET /vagas/criar — Formulário de criação."""
     return templates.TemplateResponse(request, "vagas/criar.html", {"erro": None})
 
 
@@ -116,7 +107,6 @@ def criar_vaga(
     competencias_desejadas: str = Form(""),
     db: Session = Depends(get_db),
 ):
-    """POST /vagas/criar — Processa formulário de criação."""
     try:
         schema = VagaCreateSchema(
             titulo=titulo,
@@ -148,7 +138,6 @@ def criar_vaga(
 
 @router.get("/{vaga_id}", response_class=HTMLResponse)
 def detalhes_vaga(request: Request, vaga_id: int, db: Session = Depends(get_db)):
-    """GET /vagas/{id} — Detalhes da vaga."""
     service = VagaService(db)
     try:
         vaga = service.obter(vaga_id)
@@ -159,7 +148,6 @@ def detalhes_vaga(request: Request, vaga_id: int, db: Session = Depends(get_db))
 
 @router.get("/{vaga_id}/editar", response_class=HTMLResponse)
 def form_editar_vaga(request: Request, vaga_id: int, db: Session = Depends(get_db)):
-    """GET /vagas/{id}/editar — Formulário de edição."""
     service = VagaService(db)
     try:
         vaga = service.obter(vaga_id)
@@ -182,7 +170,6 @@ def editar_vaga(
     competencias_desejadas: str = Form(""),
     db: Session = Depends(get_db),
 ):
-    """POST /vagas/{id}/editar — Processa formulário de edição."""
     try:
         schema = VagaCreateSchema(
             titulo=titulo,
@@ -223,7 +210,6 @@ def editar_vaga(
 
 @router.post("/{vaga_id}/excluir")
 def excluir_vaga(vaga_id: int, db: Session = Depends(get_db)):
-    """POST /vagas/{id}/excluir — Exclui vaga via formulário."""
     service = VagaService(db)
     try:
         service.deletar(vaga_id)
