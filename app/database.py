@@ -1,0 +1,27 @@
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, Session
+from app.config import get_settings
+from app.models.orm import Base
+
+settings = get_settings()
+
+engine = create_engine(
+    settings.database_url,
+    connect_args={"check_same_thread": False} if "sqlite" in settings.database_url else {},
+)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+def init_db() -> None:
+    """Cria todas as tabelas no banco de dados."""
+    Base.metadata.create_all(bind=engine)
+
+
+def get_db() -> Session:
+    """Dependency para injetar sessão do banco nas rotas."""
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
