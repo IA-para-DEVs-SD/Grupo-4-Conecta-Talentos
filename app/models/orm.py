@@ -1,6 +1,6 @@
 from datetime import datetime
 from sqlalchemy import (
-    Column, Integer, String, Text, DateTime, ForeignKey, CheckConstraint
+    Column, Integer, String, Text, DateTime, ForeignKey, CheckConstraint, Index
 )
 from sqlalchemy.orm import relationship, declarative_base
 
@@ -23,6 +23,10 @@ class VagaORM(Base):
         "CurriculoORM", back_populates="vaga", cascade="all, delete-orphan"
     )
 
+    __table_args__ = (
+        Index("ix_vagas_titulo", "titulo"),
+    )
+
 
 class CurriculoORM(Base):
     __tablename__ = "curriculos"
@@ -39,6 +43,11 @@ class CurriculoORM(Base):
     vaga = relationship("VagaORM", back_populates="curriculos")
     analise = relationship(
         "AnaliseORM", back_populates="curriculo", uselist=False, cascade="all, delete-orphan"
+    )
+
+    __table_args__ = (
+        Index("ix_curriculos_vaga_id", "vaga_id"),
+        Index("ix_curriculos_status", "status"),
     )
 
 
@@ -60,4 +69,6 @@ class AnaliseORM(Base):
 
     __table_args__ = (
         CheckConstraint("score >= 0 AND score <= 100", name="check_score_range"),
+        Index("ix_analises_curriculo_id", "curriculo_id"),
+        Index("ix_analises_score", "score"),
     )

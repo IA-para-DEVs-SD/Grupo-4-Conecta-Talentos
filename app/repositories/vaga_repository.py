@@ -1,7 +1,8 @@
 import json
+import os
 from typing import List, Optional
 from sqlalchemy.orm import Session
-from app.models.orm import VagaORM
+from app.models.orm import VagaORM, CurriculoORM
 from app.models.domain import Vaga, VagaCreate
 
 
@@ -56,10 +57,15 @@ class VagaRepository:
         return _orm_to_domain(orm)
 
     def deletar(self, vaga_id: int) -> bool:
-        """Deleta vaga e em cascata todos os currículos e análises associados."""
+        """Deleta vaga, currículos, análises e PDFs do disco em cascata."""
         orm = self.db.query(VagaORM).filter(VagaORM.id == vaga_id).first()
         if not orm:
             return False
+        # Remove PDFs do disco antes de deletar do banco
+        curriculos = self.db.query(CurriculoORM).filter(CurriculoORM.vaga_id == vaga_id).all()
+        for curriculo in curriculos:
+            if curriculo.caminho_pdf and os.path.exists(curriculo.caminho_pdf):
+                os.remove(curriculo.caminho_pdf)
         self.db.delete(orm)
         self.db.commit()
         return True

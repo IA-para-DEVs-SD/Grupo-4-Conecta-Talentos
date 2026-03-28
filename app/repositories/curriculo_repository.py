@@ -1,3 +1,4 @@
+import os
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from app.models.orm import CurriculoORM
@@ -54,10 +55,13 @@ class CurriculoRepository:
         return _orm_to_domain(orm)
 
     def deletar(self, curriculo_id: int) -> bool:
-        """Deleta currículo e em cascata a análise associada."""
+        """Deleta currículo, análise associada e o arquivo PDF do disco."""
         orm = self.db.query(CurriculoORM).filter(CurriculoORM.id == curriculo_id).first()
         if not orm:
             return False
+        # Remove PDF do disco
+        if orm.caminho_pdf and os.path.exists(orm.caminho_pdf):
+            os.remove(orm.caminho_pdf)
         self.db.delete(orm)
         self.db.commit()
         return True
