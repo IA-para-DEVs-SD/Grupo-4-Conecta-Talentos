@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}ConectaTalentos — Início{% endblock %}
+{% block content %}
+<div class="text-center py-5">
+    <h1 class="display-5 fw-bold">🎯 ConectaTalentos</h1>
+    <p class="lead text-muted">Ranqueamento inteligente de currículos com IA</p>
+    <a href="/vagas/" class="btn btn-primary btn-lg mt-3">Ver Vagas</a>
+    <a href="/vagas/criar" class="btn btn-outline-primary btn-lg mt-3 ms-2">Nova Vaga</a>
+</div>
+
+<div class="row mt-4 g-4">
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="fs-1">📄</div>
+                <h5 class="card-title mt-2">Cadastre Vagas</h5>
+                <p class="card-text text-muted">Defina requisitos técnicos, experiência e competências desejadas.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="fs-1">🔒</div>
+                <h5 class="card-title mt-2">LGPD Compliant</h5>
+                <p class="card-text text-muted">Dados pessoais anonimizados automaticamente via Microsoft Presidio.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="fs-1">🤖</div>
+                <h5 class="card-title mt-2">Análise por IA</h5>
+                <p class="card-text text-muted">Candidatos ranqueados de 0 a 100 com justificativas detalhadas.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

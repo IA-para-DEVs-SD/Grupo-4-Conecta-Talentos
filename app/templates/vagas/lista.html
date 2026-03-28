@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Vagas — ConectaTalentos{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Vagas Cadastradas</h2>
+    <a href="/vagas/criar" class="btn btn-primary">+ Nova Vaga</a>
+</div>
+
+{% if vagas %}
+<div class="row g-3">
+    {% for vaga in vagas %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">{{ vaga.titulo }}</h5>
+                <p class="card-text text-muted small">{{ vaga.descricao[:120] }}{% if vaga.descricao|length > 120 %}...{% endif %}</p>
+                <p class="small"><strong>Experiência:</strong> {{ vaga.experiencia_minima }}</p>
+            </div>
+            <div class="card-footer bg-transparent d-flex gap-2">
+                <a href="/vagas/{{ vaga.id }}" class="btn btn-sm btn-outline-primary">Detalhes</a>
+                <a href="/ranking/{{ vaga.id }}" class="btn btn-sm btn-outline-success">Ranking</a>
+                <a href="/curriculos/upload/{{ vaga.id }}" class="btn btn-sm btn-outline-secondary">Upload</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5 text-muted">
+    <div class="fs-1">📋</div>
+    <p class="mt-2">Nenhuma vaga cadastrada ainda.</p>
+    <a href="/vagas/criar" class="btn btn-primary">Criar primeira vaga</a>
+</div>
+{% endif %}
+{% endblock %}

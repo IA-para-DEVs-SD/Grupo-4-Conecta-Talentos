@@ -1,0 +1,21 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.navbar-brand {
+    font-size: 1.2rem;
+}
+
+.card {
+    border-radius: 0.75rem;
+}
+
+.list-group-item {
+    border-radius: 0.5rem !important;
+    margin-bottom: 0.5rem;
+    border: 1px solid #dee2e6 !important;
+}
+
+.badge.fs-5 {
+    min-width: 3rem;
+}

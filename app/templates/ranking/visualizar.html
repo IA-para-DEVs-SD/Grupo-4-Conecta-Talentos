@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Ranking — {{ vaga.titulo }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h2>Ranking de Candidatos</h2>
+        <p class="text-muted mb-0">Vaga: <strong>{{ vaga.titulo }}</strong></p>
+    </div>
+    <a href="/curriculos/upload/{{ vaga.id }}" class="btn btn-primary btn-sm">+ Upload Currículo</a>
+</div>
+
+<form method="get" class="row g-2 align-items-end mb-4">
+    <div class="col-auto">
+        <label class="form-label small">Pontuação mínima</label>
+        <input type="number" name="score_minimo" class="form-control form-control-sm"
+               value="{{ score_minimo }}" min="0" max="100" style="width:90px">
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-outline-secondary btn-sm">Filtrar</button>
+    </div>
+</form>
+
+{% if ranking %}
+<div class="list-group">
+    {% for item in ranking %}
+    <div class="list-group-item list-group-item-action p-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge bg-secondary fs-6 rounded-pill">#{{ item.posicao }}</span>
+                <div>
+                    <strong>{{ item.curriculo.nome_arquivo }}</strong>
+                    <div class="text-muted small">{{ item.analise.justificativa }}</div>
+                </div>
+            </div>
+            <div class="text-end">
+                <span class="badge fs-5 {% if item.analise.score >= 70 %}bg-success{% elif item.analise.score >= 40 %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                    {{ item.analise.score }}
+                </span>
+                <button class="btn btn-link btn-sm p-0 ms-2" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#detalhe-{{ loop.index }}">
+                    Detalhes
+                </button>
+            </div>
+        </div>
+
+        <div class="collapse mt-3" id="detalhe-{{ loop.index }}">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <h6 class="text-success">✅ Pontos Fortes</h6>
+                    <ul class="small mb-0">
+                        {% for ponto in item.analise.pontos_fortes %}
+                        <li>{{ ponto }}</li>
+                        {% else %}
+                        <li class="text-muted">Nenhum identificado</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-danger">⚠️ Lacunas</h6>
+                    <ul class="small mb-0">
+                        {% for gap in item.analise.gaps %}
+                        <li>{{ gap }}</li>
+                        {% else %}
+                        <li class="text-muted">Nenhuma identificada</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <p class="small text-muted mt-2 mb-0">
+                Tokens usados: {{ item.analise.tokens_usados }} |
+                Analisado em: {{ item.analise.analisado_em.strftime('%d/%m/%Y %H:%M') if item.analise.analisado_em else '—' }}
+            </p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5 text-muted">
+    <div class="fs-1">📊</div>
+    <p class="mt-2">Nenhum candidato encontrado{% if score_minimo > 0 %} com pontuação ≥ {{ score_minimo }}{% endif %}.</p>
+    <a href="/curriculos/upload/{{ vaga.id }}" class="btn btn-primary">Enviar primeiro currículo</a>
+</div>
+{% endif %}
+{% endblock %}
