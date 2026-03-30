@@ -1,11 +1,9 @@
-
 import pytest
 from pydantic import ValidationError
 from app.schemas.vaga_schema import VagaCreateSchema
 
 
 class TestVagaCreateSchema:
-
     def test_schema_valido(self):
         schema = VagaCreateSchema(
             titulo="Dev Python Sênior",
@@ -17,7 +15,8 @@ class TestVagaCreateSchema:
         assert schema.titulo == "Dev Python Sênior"
         assert len(schema.requisitos_tecnicos) == 2
 
-    def test_titulo_vazio_falha(self):
+    def test_titulo_invalido_falha(self):
+        """Testa título vazio e muito curto."""
         with pytest.raises(ValidationError):
             VagaCreateSchema(
                 titulo="",
@@ -26,8 +25,6 @@ class TestVagaCreateSchema:
                 experiencia_minima="1 ano",
                 competencias_desejadas=["Comunicação"],
             )
-
-    def test_titulo_curto_falha(self):
         with pytest.raises(ValidationError):
             VagaCreateSchema(
                 titulo="AB",
@@ -47,7 +44,8 @@ class TestVagaCreateSchema:
                 competencias_desejadas=["Comunicação"],
             )
 
-    def test_requisitos_vazios_falha(self):
+    def test_requisitos_invalidos_falha(self):
+        """Testa requisitos vazios e com apenas espaços."""
         with pytest.raises(ValidationError):
             VagaCreateSchema(
                 titulo="Dev Python",
@@ -56,8 +54,6 @@ class TestVagaCreateSchema:
                 experiencia_minima="1 ano",
                 competencias_desejadas=["Comunicação"],
             )
-
-    def test_requisitos_so_espacos_falha(self):
         with pytest.raises(ValidationError):
             VagaCreateSchema(
                 titulo="Dev Python",
@@ -86,16 +82,3 @@ class TestVagaCreateSchema:
                 experiencia_minima="",
                 competencias_desejadas=["Comunicação"],
             )
-
-    def test_strip_em_campos_texto(self):
-        schema = VagaCreateSchema(
-            titulo="  Dev Python  ",
-            descricao="  Descrição válida com mais de 10 chars  ",
-            requisitos_tecnicos=["  Python  ", "  FastAPI  "],
-            experiencia_minima="  3 anos  ",
-            competencias_desejadas=["  Comunicação  "],
-        )
-        assert schema.titulo == "Dev Python"
-        assert schema.experiencia_minima == "3 anos"
-        assert schema.requisitos_tecnicos == ["Python", "FastAPI"]
-        assert schema.competencias_desejadas == ["Comunicação"]

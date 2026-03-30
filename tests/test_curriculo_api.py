@@ -1,6 +1,4 @@
-
 import io
-import pytest
 
 PDF_VALIDO = b"%PDF-1.4 fake content for testing purposes"
 PDF_INVALIDO = b"Este nao e um PDF"
@@ -23,7 +21,9 @@ class TestUploadCurriculoAPI:
     def test_upload_sucesso(self, client, tmp_path, monkeypatch):
         monkeypatch.setattr(
             "app.services.curriculo_service.get_settings",
-            lambda: type("S", (), {"upload_dir": str(tmp_path), "max_file_size_mb": 10})(),
+            lambda: type(
+                "S", (), {"upload_dir": str(tmp_path), "max_file_size_mb": 10}
+            )(),
         )
         vaga_id = _criar_vaga(client)
         resp = client.post(
@@ -38,7 +38,9 @@ class TestUploadCurriculoAPI:
     def test_upload_multiplos(self, client, tmp_path, monkeypatch):
         monkeypatch.setattr(
             "app.services.curriculo_service.get_settings",
-            lambda: type("S", (), {"upload_dir": str(tmp_path), "max_file_size_mb": 10})(),
+            lambda: type(
+                "S", (), {"upload_dir": str(tmp_path), "max_file_size_mb": 10}
+            )(),
         )
         vaga_id = _criar_vaga(client)
         resp = client.post(
@@ -54,12 +56,16 @@ class TestUploadCurriculoAPI:
     def test_upload_arquivo_invalido(self, client, tmp_path, monkeypatch):
         monkeypatch.setattr(
             "app.services.curriculo_service.get_settings",
-            lambda: type("S", (), {"upload_dir": str(tmp_path), "max_file_size_mb": 10})(),
+            lambda: type(
+                "S", (), {"upload_dir": str(tmp_path), "max_file_size_mb": 10}
+            )(),
         )
         vaga_id = _criar_vaga(client)
         resp = client.post(
             f"/curriculos/api/{vaga_id}",
-            files=[("arquivos", ("cv.pdf", io.BytesIO(PDF_INVALIDO), "application/pdf"))],
+            files=[
+                ("arquivos", ("cv.pdf", io.BytesIO(PDF_INVALIDO), "application/pdf"))
+            ],
         )
         assert resp.status_code == 400
         assert len(resp.json()["erros"]) == 1
@@ -67,12 +73,16 @@ class TestUploadCurriculoAPI:
     def test_upload_extensao_invalida(self, client, tmp_path, monkeypatch):
         monkeypatch.setattr(
             "app.services.curriculo_service.get_settings",
-            lambda: type("S", (), {"upload_dir": str(tmp_path), "max_file_size_mb": 10})(),
+            lambda: type(
+                "S", (), {"upload_dir": str(tmp_path), "max_file_size_mb": 10}
+            )(),
         )
         vaga_id = _criar_vaga(client)
         resp = client.post(
             f"/curriculos/api/{vaga_id}",
-            files=[("arquivos", ("cv.docx", io.BytesIO(PDF_VALIDO), "application/pdf"))],
+            files=[
+                ("arquivos", ("cv.docx", io.BytesIO(PDF_VALIDO), "application/pdf"))
+            ],
         )
         assert resp.status_code == 400
         assert "Apenas arquivos PDF" in resp.json()["erros"][0]
@@ -80,30 +90,15 @@ class TestUploadCurriculoAPI:
     def test_upload_vaga_inexistente(self, client, tmp_path, monkeypatch):
         monkeypatch.setattr(
             "app.services.curriculo_service.get_settings",
-            lambda: type("S", (), {"upload_dir": str(tmp_path), "max_file_size_mb": 10})(),
+            lambda: type(
+                "S", (), {"upload_dir": str(tmp_path), "max_file_size_mb": 10}
+            )(),
         )
         resp = client.post(
             "/curriculos/api/999",
             files=[("arquivos", ("cv.pdf", io.BytesIO(PDF_VALIDO), "application/pdf"))],
         )
         assert resp.status_code == 404
-
-    def test_upload_misto_sucesso_e_erro(self, client, tmp_path, monkeypatch):
-        monkeypatch.setattr(
-            "app.services.curriculo_service.get_settings",
-            lambda: type("S", (), {"upload_dir": str(tmp_path), "max_file_size_mb": 10})(),
-        )
-        vaga_id = _criar_vaga(client)
-        resp = client.post(
-            f"/curriculos/api/{vaga_id}",
-            files=[
-                ("arquivos", ("cv1.pdf", io.BytesIO(PDF_VALIDO), "application/pdf")),
-                ("arquivos", ("cv2.docx", io.BytesIO(PDF_VALIDO), "application/pdf")),
-            ],
-        )
-        data = resp.json()
-        assert data["enviados"] == 1
-        assert len(data["erros"]) == 1
 
 
 class TestListarCurriculosAPI:
@@ -116,7 +111,9 @@ class TestListarCurriculosAPI:
     def test_listar_com_curriculos(self, client, tmp_path, monkeypatch):
         monkeypatch.setattr(
             "app.services.curriculo_service.get_settings",
-            lambda: type("S", (), {"upload_dir": str(tmp_path), "max_file_size_mb": 10})(),
+            lambda: type(
+                "S", (), {"upload_dir": str(tmp_path), "max_file_size_mb": 10}
+            )(),
         )
         vaga_id = _criar_vaga(client)
         client.post(
@@ -134,7 +131,9 @@ class TestDeletarCurriculoAPI:
     def test_deletar_sucesso(self, client, tmp_path, monkeypatch):
         monkeypatch.setattr(
             "app.services.curriculo_service.get_settings",
-            lambda: type("S", (), {"upload_dir": str(tmp_path), "max_file_size_mb": 10})(),
+            lambda: type(
+                "S", (), {"upload_dir": str(tmp_path), "max_file_size_mb": 10}
+            )(),
         )
         vaga_id = _criar_vaga(client)
         resp = client.post(

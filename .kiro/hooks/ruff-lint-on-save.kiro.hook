@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "Ruff Lint on Save",
+  "description": "Executa ruff check automaticamente quando arquivos Python são salvos",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/*.py"
+    ]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "ruff check .",
+    "timeout": 30
+  }
+}
