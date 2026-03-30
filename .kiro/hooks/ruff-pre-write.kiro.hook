@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Ruff Check Before Write",
+  "description": "Pede ao agente para executar ruff check antes de modificar arquivos Python",
+  "version": "1",
+  "when": {
+    "type": "preToolUse",
+    "toolTypes": [
+      "write"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Execute ruff check no arquivo que será modificado para verificar se há problemas de linting antes de prosseguir"
+  }
+}

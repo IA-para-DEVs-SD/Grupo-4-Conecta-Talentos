@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}Enviar Currículos — ConectaTalentos{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-1">Enviar Currículos</h2>
+                <p class="text-muted mb-0">{{ vaga.titulo }}</p>
+            </div>
+            <a href="/vagas/{{ vaga_id }}" class="btn btn-outline-secondary btn-sm">← Voltar para vaga</a>
+        </div>
+
+        {% if erro %}
+        <div class="alert alert-danger" role="alert">{{ erro }}</div>
+        {% endif %}
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <form method="post" action="/curriculos/upload/{{ vaga_id }}" enctype="multipart/form-data" id="upload-form">
+                    <!-- Área de drag & drop -->
+                    <div id="drop-zone" class="drop-zone mb-3">
+                        <div class="drop-zone-content text-center py-5">
+                            <i class="bi bi-cloud-arrow-up fs-1 text-primary"></i>
+                            <p class="mt-2 mb-1 fw-semibold">Arraste arquivos PDF aqui</p>
+                            <p class="text-muted small mb-2">ou clique para selecionar</p>
+                            <input type="file" class="form-control d-none" id="arquivos" name="arquivos"
+                                accept=".pdf" multiple>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="btn-selecionar">
+                                Selecionar arquivos
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Lista de arquivos selecionados -->
+                    <div id="lista-arquivos" class="mb-3 d-none">
+                        <label class="form-label fw-semibold">Arquivos selecionados:</label>
+                        <ul id="arquivos-lista" class="list-group"></ul>
+                    </div>
+
+                    <!-- Barra de progresso -->
+                    <div id="progresso" class="d-none mb-3">
+                        <div class="d-flex align-items-center gap-2 text-muted">
+                            <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
+                            <span id="progresso-texto">Enviando currículos...</span>
+                        </div>
+                        <div class="progress mt-2" style="height: 6px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" id="progresso-barra"
+                                role="progressbar" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary" id="btn-enviar" disabled>
+                            <i class="bi bi-upload me-1"></i>Enviar
+                        </button>
+                        <a href="/vagas/{{ vaga_id }}" class="btn btn-outline-secondary">Cancelar</a>
+                    </div>
+                    <div class="form-text mt-2">Apenas arquivos PDF. Máximo {{ config.max_file_size_mb if config else 10 }} MB por arquivo.</div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Currículos já enviados -->
+        {% if curriculos %}
+        <h4 class="mb-3">Currículos enviados <span class="badge bg-secondary">{{ curriculos|length }}</span></h4>
+        <div class="list-group">
+            {% for c in curriculos %}
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="bi bi-file-earmark-pdf text-danger me-2"></i>
+                    <span>{{ c.nome_arquivo }}</span>
+                    <small class="text-muted ms-2">
+                        {% if c.enviado_em %}{{ c.enviado_em.strftime('%d/%m/%Y %H:%M') }}{% endif %}
+                    </small>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-{{ 'success' if c.status == 'processado' else 'warning' if c.status == 'pendente' else 'danger' }}">
+                        {{ c.status }}
+                    </span>
+                    <form method="post" action="/curriculos/{{ c.id }}/excluir" class="d-inline"
+                        onsubmit="return confirm('Excluir este currículo?')">
+                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Excluir">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('arquivos');
+    const btnSelecionar = document.getElementById('btn-selecionar');
+    const btnEnviar = document.getElementById('btn-enviar');
+    const listaContainer = document.getElementById('lista-arquivos');
+    const listaUl = document.getElementById('arquivos-lista');
+    const form = document.getElementById('upload-form');
+    const progresso = document.getElementById('progresso');
+    const progressoBarra = document.getElementById('progresso-barra');
+
+    // Clique no botão selecionar
+    btnSelecionar.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('click', (e) => {
+        if (e.target === dropZone || e.target.closest('.drop-zone-content')) {
+            fileInput.click();
+        }
+    });
+
+    // Drag & drop
+    ['dragenter', 'dragover'].forEach(evt => {
+        dropZone.addEventListener(evt, (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drop-zone-active');
+        });
+    });
+    ['dragleave', 'drop'].forEach(evt => {
+        dropZone.addEventListener(evt, (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drop-zone-active');
+        });
+    });
+    dropZone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        if (dt.files.length) {
+            fileInput.files = dt.files;
+            atualizarLista();
+        }
+    });
+
+    // Seleção de arquivos
+    fileInput.addEventListener('change', atualizarLista);
+
+    function atualizarLista() {
+        listaUl.innerHTML = '';
+        const files = fileInput.files;
+        if (!files.length) {
+            listaContainer.classList.add('d-none');
+            btnEnviar.disabled = true;
+            return;
+        }
+        listaContainer.classList.remove('d-none');
+        let validos = 0;
+        for (const f of files) {
+            const isPdf = f.name.toLowerCase().endsWith('.pdf');
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center py-2';
+            li.innerHTML = `
+                <span><i class="bi bi-file-earmark-pdf ${isPdf ? 'text-danger' : 'text-muted'} me-2"></i>${f.name}</span>
+                <span class="badge bg-${isPdf ? 'primary' : 'danger'}">${isPdf ? formatSize(f.size) : 'Não é PDF'}</span>`;
+            listaUl.appendChild(li);
+            if (isPdf) validos++;
+        }
+        btnEnviar.disabled = validos === 0;
+    }
+
+    function formatSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+
+    // Submit com progresso
+    form.addEventListener('submit', function() {
+        progresso.classList.remove('d-none');
+        btnEnviar.disabled = true;
+        // Simula progresso (upload real é síncrono via form)
+        let pct = 0;
+        const interval = setInterval(() => {
+            pct = Math.min(pct + Math.random() * 15, 90);
+            progressoBarra.style.width = pct + '%';
+        }, 200);
+    });
+})();
+</script>
+{% endblock %}
