@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Vaga — ConectaTalentos{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <h2 class="mb-4">Editar Vaga</h2>
+
+        {% if erro %}
+        <div class="alert alert-danger" role="alert">{{ erro }}</div>
+        {% endif %}
+
+        <form method="post" action="/vagas/{{ vaga.id }}/editar" novalidate class="needs-validation">
+            <div class="mb-3">
+                <label for="titulo" class="form-label">Título da vaga <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="titulo" name="titulo" required
+                    value="{{ form.titulo if form else vaga.titulo }}"
+                    placeholder="Ex: Desenvolvedor Python Sênior">
+                <div class="invalid-feedback">Informe o título da vaga.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="descricao" class="form-label">Descrição <span class="text-danger">*</span></label>
+                <textarea class="form-control" id="descricao" name="descricao" rows="4" required
+                    placeholder="Descreva as responsabilidades e o contexto da vaga">{{ form.descricao if form else vaga.descricao }}</textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="requisitos_tecnicos" class="form-label">Requisitos técnicos <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="requisitos_tecnicos" name="requisitos_tecnicos" required
+                    value="{{ form.requisitos_tecnicos if form else vaga.requisitos_tecnicos | join(', ') }}"
+                    placeholder="Ex: Python, FastAPI, SQLAlchemy (separados por vírgula)">
+                <div class="form-text">Separe os requisitos por vírgula.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="experiencia_minima" class="form-label">Experiência mínima <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="experiencia_minima" name="experiencia_minima" required
+                        min="0" max="50" step="1"
+                        value="{{ form.experiencia_minima if form else vaga.experiencia_minima | replace(' ano(s)', '') | replace(' anos', '') | replace(' ano', '') }}"
+                        placeholder="Ex: 3">
+                    <span class="input-group-text">ano(s)</span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="competencias_desejadas" class="form-label">Competências desejadas <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="competencias_desejadas" name="competencias_desejadas" required
+                    value="{{ form.competencias_desejadas if form else vaga.competencias_desejadas | join(', ') }}"
+                    placeholder="Ex: Trabalho em equipe, Comunicação (separadas por vírgula)">
+                <div class="form-text">Separe as competências por vírgula.</div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Salvar alterações</button>
+                <a href="/vagas/{{ vaga.id }}" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+    'use strict';
+    var forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
+</script>
+{% endblock %}

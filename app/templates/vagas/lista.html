@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Vagas — ConectaTalentos{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Vagas <small class="text-muted fs-6">({{ total }} total)</small></h2>
+    <a href="/vagas/criar" class="btn btn-primary">Nova Vaga</a>
+</div>
+
+{% if vagas %}
+<div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for vaga in vagas %}
+    <div class="col">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">{{ vaga.titulo }}</h5>
+                <p class="card-text text-muted">{{ vaga.descricao[:120] }}{% if vaga.descricao|length > 120 %}...{% endif %}</p>
+                <small class="text-muted">Experiência: {{ vaga.experiencia_minima }}</small>
+            </div>
+            <div class="card-footer d-flex gap-2">
+                <a href="/vagas/{{ vaga.id }}" class="btn btn-sm btn-outline-primary">Ver detalhes</a>
+                <a href="/vagas/{{ vaga.id }}/editar" class="btn btn-sm btn-outline-warning">Editar</a>
+                <a href="/curriculos/upload/{{ vaga.id }}" class="btn btn-sm btn-outline-secondary">Enviar currículo</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if total_paginas > 1 %}
+<nav aria-label="Paginação de vagas" class="mt-4">
+    <ul class="pagination justify-content-center">
+        <li class="page-item {% if pagina <= 1 %}disabled{% endif %}">
+            <a class="page-link" href="/vagas?pagina={{ pagina - 1 }}">Anterior</a>
+        </li>
+        {% for p in range(1, total_paginas + 1) %}
+        <li class="page-item {% if p == pagina %}active{% endif %}">
+            <a class="page-link" href="/vagas?pagina={{ p }}">{{ p }}</a>
+        </li>
+        {% endfor %}
+        <li class="page-item {% if pagina >= total_paginas %}disabled{% endif %}">
+            <a class="page-link" href="/vagas?pagina={{ pagina + 1 }}">Próxima</a>
+        </li>
+    </ul>
+</nav>
+{% endif %}
+
+{% else %}
+<div class="alert alert-info" role="alert">
+    Nenhuma vaga cadastrada ainda. <a href="/vagas/criar" class="alert-link">Criar primeira vaga</a>.
+</div>
+{% endif %}
+{% endblock %}
