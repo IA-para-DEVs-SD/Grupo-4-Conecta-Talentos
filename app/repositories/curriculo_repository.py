@@ -23,11 +23,18 @@ class CurriculoRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def criar(self, vaga_id: int, nome_arquivo: str, caminho_pdf: str) -> Curriculo:
+    def criar(
+        self,
+        vaga_id: int,
+        nome_arquivo: str,
+        caminho_pdf: str,
+        texto_extraido: str | None = None,
+    ) -> Curriculo:
         orm = CurriculoORM(
             vaga_id=vaga_id,
             nome_arquivo=nome_arquivo,
             caminho_pdf=caminho_pdf,
+            texto_extraido=texto_extraido,
         )
         self.db.add(orm)
         self.db.commit()

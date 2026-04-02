@@ -55,7 +55,7 @@ class RankingService:
             LLMError: Se houver erro na análise de algum currículo
         """
         # Busca vaga
-        vaga = self.vaga_repo.obter_por_id(vaga_id)
+        vaga = self.vaga_repo.obter(vaga_id)
         if not vaga:
             raise ValueError(f"Vaga com ID {vaga_id} não encontrada")
 
@@ -75,6 +75,11 @@ class RankingService:
                 # Usa análise existente
                 analises.append(analise_existente)
             else:
+                # Valida se o currículo tem texto extraído
+                if not curriculo.texto_extraido:
+                    print(f"Currículo {curriculo.id} não tem texto extraído. Pulando...")
+                    continue
+                
                 # Realiza nova análise
                 try:
                     resultado = self.analisador.analisar(
@@ -100,9 +105,10 @@ class RankingService:
                     analise_salva = self.analise_repo.criar(analise)
                     analises.append(analise_salva)
 
-                except LLMError as e:
+                except Exception as e:
                     # Log do erro mas continua processando outros currículos
                     print(f"Erro ao analisar currículo {curriculo.id}: {e}")
+                    continue
                     continue
 
         # Ordena por score (maior para menor)
@@ -127,7 +133,7 @@ class RankingService:
             LLMError: Se houver erro na análise de algum currículo
         """
         # Busca vaga
-        vaga = self.vaga_repo.obter_por_id(vaga_id)
+        vaga = self.vaga_repo.obter(vaga_id)
         if not vaga:
             raise ValueError(f"Vaga com ID {vaga_id} não encontrada")
 
@@ -146,6 +152,11 @@ class RankingService:
             if analise_existente and not reprocessar:
                 analises.append(analise_existente)
             else:
+                # Valida se o currículo tem texto extraído
+                if not curriculo.texto_extraido:
+                    print(f"Currículo {curriculo.id} não tem texto extraído. Pulando...")
+                    continue
+                
                 # Realiza nova análise de forma assíncrona
                 try:
                     resultado = await self.analisador.analisar_async(
@@ -195,7 +206,7 @@ class RankingService:
             ValueError: Se a vaga não existir
         """
         # Verifica se vaga existe
-        vaga = self.vaga_repo.obter_por_id(vaga_id)
+        vaga = self.vaga_repo.obter(vaga_id)
         if not vaga:
             raise ValueError(f"Vaga com ID {vaga_id} não encontrada")
 
@@ -248,14 +259,14 @@ class RankingService:
 Descrição:
 {vaga.descricao}
 
-Requisitos:
-{vaga.requisitos}
+Requisitos Técnicos:
+{', '.join(vaga.requisitos_tecnicos)}
 """
 
         if vaga.experiencia_minima:
             texto += f"\nExperiência Mínima: {vaga.experiencia_minima}"
 
-        if vaga.competencias:
-            texto += f"\n\nCompetências Desejadas:\n{vaga.competencias}"
+        if vaga.competencias_desejadas:
+            texto += f"\n\nCompetências Desejadas:\n{', '.join(vaga.competencias_desejadas)}"
 
         return texto.strip()

@@ -7,6 +7,7 @@ from app.config import get_settings
 from app.models.domain import Curriculo
 from app.repositories.curriculo_repository import CurriculoRepository
 from app.repositories.vaga_repository import VagaRepository
+from backend.src.services.extrator_pdf import ExtratorPDF
 
 PDF_MAGIC_BYTES = b"%PDF"
 
@@ -63,6 +64,7 @@ class CurriculoService:
         self.repo = CurriculoRepository(db)
         self.vaga_repo = VagaRepository(db)
         self.settings = get_settings()
+        self.extrator = ExtratorPDF()
 
     def upload(self, vaga_id: int, nome_arquivo: str, conteudo: bytes) -> Curriculo:
         if not self.vaga_repo.obter(vaga_id):
@@ -73,10 +75,19 @@ class CurriculoService:
         caminho = _gerar_caminho_unico(self.settings.upload_dir, vaga_id, nome_arquivo)
         caminho.write_bytes(conteudo)
 
+        # Extrai texto do PDF
+        try:
+            resultado = self.extrator.extrair_texto(caminho)
+            texto_extraido = resultado.conteudo
+        except Exception as e:
+            print(f"Erro ao extrair texto do PDF {nome_arquivo}: {e}")
+            texto_extraido = None
+
         return self.repo.criar(
             vaga_id=vaga_id,
             nome_arquivo=nome_arquivo,
             caminho_pdf=str(caminho),
+            texto_extraido=texto_extraido,
         )
 
     def upload_multiplos(
@@ -92,10 +103,20 @@ class CurriculoService:
                 validar_pdf(conteudo, nome, self.settings.max_file_size_mb)
                 caminho = _gerar_caminho_unico(self.settings.upload_dir, vaga_id, nome)
                 caminho.write_bytes(conteudo)
+                
+                # Extrai texto do PDF
+                try:
+                    resultado = self.extrator.extrair_texto(caminho)
+                    texto_extraido = resultado.conteudo
+                except Exception as e:
+                    print(f"Erro ao extrair texto do PDF {nome}: {e}")
+                    texto_extraido = None
+                
                 curriculo = self.repo.criar(
                     vaga_id=vaga_id,
                     nome_arquivo=nome,
                     caminho_pdf=str(caminho),
+                    texto_extraido=texto_extraido,
                 )
                 sucessos.append(curriculo)
             except CurriculoError as e:

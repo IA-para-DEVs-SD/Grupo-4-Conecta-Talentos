@@ -174,7 +174,7 @@ async def obter_detalhes_candidato(
             )
 
         # Busca dados do currículo
-        curriculo = ranking_service.curriculo_repo.obter_por_id(curriculo_id)
+        curriculo = ranking_service.curriculo_repo.obter(curriculo_id)
 
         if not curriculo or curriculo.vaga_id != vaga_id:
             raise HTTPException(
@@ -183,14 +183,16 @@ async def obter_detalhes_candidato(
             )
 
         # Busca dados da vaga
-        vaga = ranking_service.vaga_repo.obter_por_id(vaga_id)
+        vaga = ranking_service.vaga_repo.obter(vaga_id)
 
         return {
             "vaga": {
                 "id": vaga.id,
                 "titulo": vaga.titulo,
                 "descricao": vaga.descricao,
-                "requisitos": vaga.requisitos,
+                "requisitos_tecnicos": vaga.requisitos_tecnicos,
+                "competencias_desejadas": vaga.competencias_desejadas,
+                "experiencia_minima": vaga.experiencia_minima,
             },
             "curriculo": {
                 "id": curriculo.id,
