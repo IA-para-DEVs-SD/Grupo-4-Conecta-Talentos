@@ -25,6 +25,17 @@ async def lifespan(app: FastAPI):
     init_db()
     logger.info("Banco de dados inicializado")
     
+    # Popula dados de exemplo em DEV se banco estiver vazio
+    if settings.debug:
+        from app.database import SessionLocal
+        from app.seed_data import seed_vagas_if_empty
+        
+        db = SessionLocal()
+        try:
+            seed_vagas_if_empty(db)
+        finally:
+            db.close()
+    
     yield
     
     logger.info(f"Encerrando {settings.app_name}")
