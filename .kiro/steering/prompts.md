@@ -224,3 +224,64 @@ Refatore [componente] para seguir a arquitetura em camadas definida em structure
 ```
 Implemente [funcionalidade] seguindo os requisitos em .kiro/specs/conecta-talentos/requirements.md
 ```
+
+---
+
+## Implementação do Pipeline de Processamento de Currículos
+
+### 8. Integração do ExtratorPDF no Pipeline
+
+**Prompt:**
+```
+Integrar o ExtratorPDF já implementado no pipeline de processamento automático de currículos.
+Critérios de aceite:
+- Extração executada automaticamente após upload
+- Texto extraído armazenado no banco
+- Erros tratados adequadamente
+- Testes de integração criados
+```
+
+**Resultado:**
+- Criação de `app/processors/extrator_pdf.py` — wrapper do ExtratorPDF no layer de processors, expondo `extrair_texto_pdf()`
+- Atualização de `app/services/curriculo_service.py`:
+  - Adicionado método `_extrair_e_persistir()` chamado automaticamente após salvar o arquivo
+  - Extração executada em `upload()` e `upload_multiplos()`
+  - Erros de extração (`PDFError`) tratados com graceful degradation: status `"erro_extracao"` sem interromper o fluxo
+- Criação de `tests/test_extracao_pipeline.py` com 5 testes unitários (mock) + 1 teste de integração real com pymupdf
+
+**Data:** 2026-03-30
+
+---
+
+### 9. Implementação do Módulo de Anonimização com Microsoft Presidio
+
+**Prompt:**
+```
+Implementar o módulo completo de anonimização de dados sensíveis usando Microsoft Presidio,
+incluindo configuração, classe Anonimizador e integração no pipeline.
+Critérios de aceite:
+- Presidio instalado e configurado com reconhecedores em português
+- Classe Anonimizador identifica e substitui: nomes, CPF, endereços, telefones, emails
+- Preserva informações profissionais
+- Anonimização executada após extração de texto no pipeline
+- Texto anonimizado armazenado no banco
+- Erros tratados adequadamente
+- Testes unitários e de integração
+```
+
+**Resultado:**
+- Criação de `app/processors/anonimizador.py`:
+  - Classe `Anonimizador` com duas estratégias: Presidio (spaCy `pt_core_news_lg`) e fallback regex
+  - Substitui: `PERSON → [NOME]`, `EMAIL_ADDRESS → [EMAIL]`, `PHONE_NUMBER → [TELEFONE]`, `BR_CPF → [CPF]`, `LOCATION → [ENDERECO]`, `URL → [URL]`
+  - Fallback regex cobre CPF, e-mail, telefone e CEP quando Presidio não está disponível
+  - `ResultadoAnonimizacao` dataclass com texto substituído, entidades encontradas e contagem
+  - `PresidioIndisponivelError` e `AnonimizadorError` para tratamento de erros
+- Atualização de `app/services/curriculo_service.py`:
+  - Pipeline completo: extração → anonimização em `_extrair_e_persistir()`
+  - Falha na anonimização preserva texto extraído com status `"extraido"` (degradação graciosa)
+  - Status final de sucesso: `"anonimizado"`
+- Atualização de `requirements.txt`: adicionado `presidio-analyzer`, `presidio-anonymizer`, `spacy`
+- Atualização de `tests/test_curriculo_service.py`: mocks do pipeline adicionados nos testes existentes
+- Criação de `tests/test_anonimizador.py` com 18 testes: regex, Presidio mockado, configuração e integração no pipeline
+
+**Data:** 2026-03-30
