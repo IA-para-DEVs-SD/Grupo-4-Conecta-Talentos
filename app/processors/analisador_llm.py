@@ -6,7 +6,7 @@ from datetime import datetime
 
 from app.config import Settings, get_settings
 from app.models.analise import PromptAnalise, ResultadoAnalise
-from app.processors.exceptions import LLMError
+from app.processors.exceptions import LLMError, LLMRateLimitError
 from app.processors.openai_client import OpenAIClient
 from app.processors.otimizador_prompt import OtimizadorPrompt
 
@@ -30,8 +30,13 @@ class AnalisadorLLM:
             settings: Configurações da aplicação. Se None, usa get_settings()
         """
         self.settings = settings or get_settings()
-        self.openai_client = OpenAIClient(settings=self.settings)
+        
+        # Usa Groq diretamente (API gratuita)
+        from app.processors.groq_client import GroqClient
+        self.llm_client = GroqClient(settings=self.settings)
         self.otimizador = OtimizadorPrompt(settings=self.settings)
+        
+        print("✓ AnalisadorLLM: Usando Groq (Llama 3.1 70B)")
 
     def _construir_prompt(self, texto_vaga: str, texto_curriculo: str) -> PromptAnalise:
         """Constrói o prompt estruturado para análise.
@@ -184,8 +189,8 @@ IMPORTANTE:
                 f"Prompt excede limite de tokens: {tokens_usados} > {self.settings.openai_max_tokens}"
             )
 
-        # Chama LLM
-        resposta = self.openai_client.chat_completion(
+        # Chama LLM (Groq)
+        resposta = self.llm_client.chat_completion(
             mensagens, temperature=0.3  # Temperatura baixa para respostas mais consistentes
         )
 
@@ -240,8 +245,8 @@ IMPORTANTE:
                 f"Prompt excede limite de tokens: {tokens_usados} > {self.settings.openai_max_tokens}"
             )
 
-        # Chama LLM de forma assíncrona
-        resposta = await self.openai_client.async_chat_completion(
+        # Chama LLM de forma assíncrona (Groq)
+        resposta = await self.llm_client.async_chat_completion(
             mensagens, temperature=0.3
         )
 

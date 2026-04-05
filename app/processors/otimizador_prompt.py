@@ -27,7 +27,14 @@ class OtimizadorPrompt:
             settings: Configurações da aplicação. Se None, usa get_settings()
         """
         self.settings = settings or get_settings()
-        self.encoding = tiktoken.encoding_for_model(self.settings.openai_model)
+        
+        # Usa encoding cl100k_base que funciona com GPT-4 e GPT-4o
+        # Este é o encoding padrão para modelos GPT-4
+        try:
+            self.encoding = tiktoken.encoding_for_model(self.settings.openai_model)
+        except KeyError:
+            # Se o modelo não for reconhecido, usa o encoding padrão do GPT-4
+            self.encoding = tiktoken.get_encoding("cl100k_base")
 
     def contar_tokens(self, texto: str) -> int:
         """Conta o número de tokens em um texto.

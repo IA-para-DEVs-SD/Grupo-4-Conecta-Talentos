@@ -67,7 +67,31 @@ class TestCurriculoServiceUpload:
         monkeypatch.setattr(
             "app.services.curriculo_service.get_settings",
             lambda: type(
-                "S", (), {"upload_dir": str(tmp_path), "max_file_size_mb": 10}
+                "S",
+                (),
+                {
+                    "upload_dir": str(tmp_path),
+                    "max_file_size_mb": 10,
+                    "max_pdf_pages": 10,
+                    "presidio_language": "pt",
+                },
+            )(),
+        )
+        monkeypatch.setattr(
+            "app.services.curriculo_service.extrair_texto_pdf",
+            lambda *a, **kw: type("R", (), {"conteudo": "texto"})(),
+        )
+        monkeypatch.setattr(
+            "app.services.curriculo_service.Anonimizador",
+            lambda **kw: type(
+                "A",
+                (),
+                {
+                    "anonimizar": lambda self, t: type(
+                        "R", (), {"texto_anonimizado": t, "total_substituicoes": 0}
+                    )(),
+                    "modo": "regex",
+                },
             )(),
         )
         vaga_id = _criar_vaga(db_session)
@@ -76,13 +100,20 @@ class TestCurriculoServiceUpload:
         assert curriculo.id is not None
         assert curriculo.nome_arquivo == "curriculo.pdf"
         assert curriculo.vaga_id == vaga_id
-        assert curriculo.status == "pendente"
+        assert curriculo.status in ("extraido", "anonimizado")
 
     def test_upload_arquivo_invalido(self, db_session, tmp_path, monkeypatch):
         monkeypatch.setattr(
             "app.services.curriculo_service.get_settings",
             lambda: type(
-                "S", (), {"upload_dir": str(tmp_path), "max_file_size_mb": 10}
+                "S",
+                (),
+                {
+                    "upload_dir": str(tmp_path),
+                    "max_file_size_mb": 10,
+                    "max_pdf_pages": 10,
+                    "presidio_language": "pt",
+                },
             )(),
         )
         vaga_id = _criar_vaga(db_session)
@@ -92,13 +123,43 @@ class TestCurriculoServiceUpload:
 
 
 class TestCurriculoServiceMultiplos:
-    def test_upload_multiplos_sucesso(self, db_session, tmp_path, monkeypatch):
+    def _settings(self, tmp_path):
+        return type(
+            "S",
+            (),
+            {
+                "upload_dir": str(tmp_path),
+                "max_file_size_mb": 10,
+                "max_pdf_pages": 10,
+                "presidio_language": "pt",
+            },
+        )()
+
+    def _mock_pipeline(self, monkeypatch, tmp_path):
         monkeypatch.setattr(
             "app.services.curriculo_service.get_settings",
-            lambda: type(
-                "S", (), {"upload_dir": str(tmp_path), "max_file_size_mb": 10}
+            lambda: self._settings(tmp_path),
+        )
+        monkeypatch.setattr(
+            "app.services.curriculo_service.extrair_texto_pdf",
+            lambda *a, **kw: type("R", (), {"conteudo": "texto"})(),
+        )
+        monkeypatch.setattr(
+            "app.services.curriculo_service.Anonimizador",
+            lambda **kw: type(
+                "A",
+                (),
+                {
+                    "anonimizar": lambda self, t: type(
+                        "R", (), {"texto_anonimizado": t, "total_substituicoes": 0}
+                    )(),
+                    "modo": "regex",
+                },
             )(),
         )
+
+    def test_upload_multiplos_sucesso(self, db_session, tmp_path, monkeypatch):
+        self._mock_pipeline(monkeypatch, tmp_path)
         vaga_id = _criar_vaga(db_session)
         service = CurriculoService(db_session)
         arquivos = [
@@ -110,12 +171,7 @@ class TestCurriculoServiceMultiplos:
         assert len(erros) == 0
 
     def test_upload_multiplos_com_erros(self, db_session, tmp_path, monkeypatch):
-        monkeypatch.setattr(
-            "app.services.curriculo_service.get_settings",
-            lambda: type(
-                "S", (), {"upload_dir": str(tmp_path), "max_file_size_mb": 10}
-            )(),
-        )
+        self._mock_pipeline(monkeypatch, tmp_path)
         vaga_id = _criar_vaga(db_session)
         service = CurriculoService(db_session)
         arquivos = [
@@ -138,7 +194,31 @@ class TestCurriculoServiceListar:
         monkeypatch.setattr(
             "app.services.curriculo_service.get_settings",
             lambda: type(
-                "S", (), {"upload_dir": str(tmp_path), "max_file_size_mb": 10}
+                "S",
+                (),
+                {
+                    "upload_dir": str(tmp_path),
+                    "max_file_size_mb": 10,
+                    "max_pdf_pages": 10,
+                    "presidio_language": "pt",
+                },
+            )(),
+        )
+        monkeypatch.setattr(
+            "app.services.curriculo_service.extrair_texto_pdf",
+            lambda *a, **kw: type("R", (), {"conteudo": "texto"})(),
+        )
+        monkeypatch.setattr(
+            "app.services.curriculo_service.Anonimizador",
+            lambda **kw: type(
+                "A",
+                (),
+                {
+                    "anonimizar": lambda self, t: type(
+                        "R", (), {"texto_anonimizado": t, "total_substituicoes": 0}
+                    )(),
+                    "modo": "regex",
+                },
             )(),
         )
         vaga_id = _criar_vaga(db_session)
