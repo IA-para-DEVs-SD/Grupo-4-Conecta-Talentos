@@ -1,0 +1,20 @@
+* [33m36953ac[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/ranking-service[m[33m, [m[1;31morigin/feature/ranking-service[m[33m)[m feat: implementa serviço de ranking de candidatos e configuração de qualidade de código
+* [33m3c69706[m[33m ([m[1;31morigin/feature/openai-integration[m[33m, [m[1;32mfeature/openai-integration[m[33m)[m feat: implementa classe AnalisadorLLM para análise de currículos
+* [33mf1e245c[m feat: adiciona otimização de prompts para reduzir consumo de tokens
+* [33m70ddd2e[m feat: adiciona integração com OpenAI API
+[31m|[m *   [33m4fb9f22[m[33m ([m[1;35mrefs/stash[m[33m)[m WIP on main: d23a277 Merge pull request #67 from IA-para-DEVs-SD/feature/padronizacao-projeto
+[31m|[m [32m|[m[33m\[m  
+[31m|[m [32m|[m * [33m738b9f3[m index on main: d23a277 Merge pull request #67 from IA-para-DEVs-SD/feature/padronizacao-projeto
+[31m|[m [32m|[m[32m/[m  
+[31m|[m [32m|[m * [33mebaa630[m[33m ([m[1;31morigin/feature/pipeline-extracao-anonimizacao[m[33m)[m feat: integra ExtratorPDF e anonimização Presidio no pipeline de currículos
+[31m|[m [32m|[m[31m/[m  
+[31m|[m[31m/[m[32m|[m   
+[31m|[m [32m|[m * [33m5133235[m[33m ([m[1;31morigin/feature/avaliacao-final-90pts[m[33m)[m docs: adiciona avaliacao de qualidade do projeto com rubrica adaptada para Python
+[31m|[m [32m|[m [35m|[m *   [33m759164b[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m Merge pull request #80 from IA-para-DEVs-SD/develop
+[31m|[m [32m|[m [35m|[m [36m|[m[31m\[m  
+[31m|[m [32m|[m[31m_[m[35m|[m[31m_[m[36m|[m[31m/[m  
+[31m|[m[31m/[m[32m|[m [35m|[m [36m|[m   
+* [32m|[m [35m|[m [36m|[m   [33m2c1a593[m[33m ([m[1;31morigin/develop[m[33m, [m[1;32mfeature/issue-61-openai-integration[m[33m, [m[1;32mdevelop[m[33m)[m Merge pull request #79 from IA-para-DEVs-SD/feature/avaliacao-final-90pts
+[1;32m|[m[35m\[m [32m\[m [35m\[m [36m\[m  
+[1;32m|[m [35m|[m [32m|[m[35m/[m [36m/[m  
+[1;32m|[m [35m|[m[35m/[m[32m|[m [36m|[m   

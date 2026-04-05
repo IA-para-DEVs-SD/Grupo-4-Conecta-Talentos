@@ -10,6 +10,7 @@ from app.processors.anonimizador import AnonimizadorError, Anonimizador
 from app.processors.extrator_pdf import PDFError, extrair_texto_pdf
 from app.repositories.curriculo_repository import CurriculoRepository
 from app.repositories.vaga_repository import VagaRepository
+from backend.src.services.extrator_pdf import ExtratorPDF
 
 logger = logging.getLogger(__name__)
 
@@ -68,6 +69,7 @@ class CurriculoService:
         self.repo = CurriculoRepository(db)
         self.vaga_repo = VagaRepository(db)
         self.settings = get_settings()
+        self.extrator = ExtratorPDF()
 
     def _extrair_e_persistir(self, curriculo: Curriculo) -> Curriculo:
         """Pipeline: extrai texto do PDF e anonimiza. Erros não interrompem o fluxo."""
@@ -125,10 +127,19 @@ class CurriculoService:
         caminho = _gerar_caminho_unico(self.settings.upload_dir, vaga_id, nome_arquivo)
         caminho.write_bytes(conteudo)
 
-        curriculo = self.repo.criar(
+        # Extrai texto do PDF
+        try:
+            resultado = self.extrator.extrair_texto(caminho)
+            texto_extraido = resultado.conteudo
+        except Exception as e:
+            print(f"Erro ao extrair texto do PDF {nome_arquivo}: {e}")
+            texto_extraido = None
+
+        return self.repo.criar(
             vaga_id=vaga_id,
             nome_arquivo=nome_arquivo,
             caminho_pdf=str(caminho),
+            texto_extraido=texto_extraido,
         )
         return self._extrair_e_persistir(curriculo)
 
@@ -145,10 +156,20 @@ class CurriculoService:
                 validar_pdf(conteudo, nome, self.settings.max_file_size_mb)
                 caminho = _gerar_caminho_unico(self.settings.upload_dir, vaga_id, nome)
                 caminho.write_bytes(conteudo)
+                
+                # Extrai texto do PDF
+                try:
+                    resultado = self.extrator.extrair_texto(caminho)
+                    texto_extraido = resultado.conteudo
+                except Exception as e:
+                    print(f"Erro ao extrair texto do PDF {nome}: {e}")
+                    texto_extraido = None
+                
                 curriculo = self.repo.criar(
                     vaga_id=vaga_id,
                     nome_arquivo=nome,
                     caminho_pdf=str(caminho),
+                    texto_extraido=texto_extraido,
                 )
                 curriculo = self._extrair_e_persistir(curriculo)
                 sucessos.append(curriculo)

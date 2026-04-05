@@ -8,14 +8,37 @@ from fastapi.templating import Jinja2Templates
 from app.config import get_settings
 from app.controllers import curriculo_controller, ranking_controller, vaga_controller
 from app.database import init_db
+from app.logging_config import get_logger, setup_logging
+from app.middleware import ErrorHandlerMiddleware
 
 settings = get_settings()
+logger = get_logger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Configura logging
+    setup_logging()
+    logger.info(f"Iniciando {settings.app_name}")
+    
+    # Inicializa banco de dados
     init_db()
+    logger.info("Banco de dados inicializado")
+    
+    # Popula dados de exemplo em DEV se banco estiver vazio
+    if settings.debug:
+        from app.database import SessionLocal
+        from app.seed_data import seed_vagas_if_empty
+        
+        db = SessionLocal()
+        try:
+            seed_vagas_if_empty(db)
+        finally:
+            db.close()
+    
     yield
+    
+    logger.info(f"Encerrando {settings.app_name}")
 
 
 app = FastAPI(
@@ -27,6 +50,9 @@ app = FastAPI(
     redoc_url="/redoc",
     lifespan=lifespan,
 )
+
+# Middleware de tratamento de erros (deve ser o primeiro)
+app.add_middleware(ErrorHandlerMiddleware)
 
 app.add_middleware(
     CORSMiddleware,

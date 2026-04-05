@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     openai_model: str = "gpt-4o-mini"
     openai_max_tokens: int = 2000
 
+    # Groq (API gratuita como alternativa)
+    groq_api_key: str = ""
+    groq_model: str = "llama-3.3-70b-versatile"
+
     upload_dir: str = "./data/uploads"
     max_file_size_mb: int = 10
     max_pdf_pages: int = 10
