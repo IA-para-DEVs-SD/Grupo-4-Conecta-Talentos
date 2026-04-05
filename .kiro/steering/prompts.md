@@ -166,6 +166,13 @@ agora adicione todos os prompts dessa conversa no Prompt.md e faça o commit
 - Apenas fazer commit e push quando explicitamente solicitado pelo usuário
 - Aguardar confirmação antes de versionar mudanças
 
+### Implementação Incremental
+- **Implementar item por item** em tarefas complexas
+- Após cada item implementado, **perguntar ao usuário se deseja fazer commit**
+- Aguardar confirmação do usuário antes de prosseguir para o próximo item
+- Manter commits pequenos e focados em uma única funcionalidade
+- Cada commit deve ter uma mensagem clara seguindo conventional commits
+
 ---
 
 ## Notas para Futuras Interações
